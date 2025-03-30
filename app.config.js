@@ -1,7 +1,7 @@
 // Base configuration
 const config = {
   name: "QDOS Camera",
-  slug: "qdos-camera",
+  slug: "replit3qdoscamera",
   version: "1.0.0",
   orientation: "portrait",
   icon: "./assets/icon.png",
