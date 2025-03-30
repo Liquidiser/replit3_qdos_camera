@@ -1,4 +1,6 @@
 {
+  "name": "qdoscamera",
+  "displayName": "QDOS Camera App",
   "expo": {
     "name": "QDOS Camera App",
     "slug": "qdos-camera-app",
