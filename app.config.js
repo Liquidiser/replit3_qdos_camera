@@ -1,4 +1,7 @@
-module.exports = {
+const { withAndroidPermissions } = require('@expo/config-plugins');
+
+// Base configuration
+const config = {
   name: "QDOS Camera",
   slug: "qdos-camera",
   version: "1.0.0",
@@ -53,3 +56,6 @@ module.exports = {
     ]
   ]
 };
+
+// Export the configuration with Android permissions
+module.exports = withAndroidPermissions(config);

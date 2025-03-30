@@ -63,7 +63,7 @@ const CameraScreen: React.FC = () => {
       if (activeQRData.land_riv || activeQRData.port_riv) {
         setAnimationSource(isPortrait ? activeQRData.port_riv : activeQRData.land_riv);
       } else {
-        // Otherwise use local animations
+        // Otherwise use local animations from assets/animations folder
         setAnimationSource(isPortrait ? 'port.riv' : 'land.riv');
       }
     }
@@ -107,7 +107,7 @@ const CameraScreen: React.FC = () => {
         // Use appropriate animation based on detected device orientation
         setAnimationSource(isPortrait ? data.port_riv : data.land_riv);
       } else {
-        // Use local animations if API doesn't provide URLs
+        // Use local animations from assets/animations folder if API doesn't provide URLs
         // This will help with testing in development
         setAnimationSource(isPortrait ? 'port.riv' : 'land.riv');
       }

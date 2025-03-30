@@ -129,7 +129,15 @@ The app uses custom native modules for QR code detection with Google MLKit. The 
 
 This application is currently focused on Android implementation. The camera implementation uses Vision Camera and custom native modules for QR code detection with Google MLKit.
 
-Rive animations are used as overlays to enhance the user experience when scanning QR codes. The animations can be dynamically loaded from an API or from local assets.
+Rive animations are used as overlays to enhance the user experience when scanning QR codes. The animations can be dynamically loaded from an API or from local assets stored in the `assets/animations/` directory.
+
+### Rive Animations
+
+The app includes two local Rive animation files:
+- `assets/animations/port.riv` - Used in portrait mode
+- `assets/animations/land.riv` - Used in landscape mode
+
+When a QR code is scanned, the app will automatically select the appropriate animation based on the device orientation. If the API returns custom animation URLs in the QR code data, those will be used instead of the local files.
 
 ## License
 

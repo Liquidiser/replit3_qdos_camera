@@ -66,7 +66,12 @@ const RiveAnimation: React.FC<RiveAnimationProps> = ({
 
   // Determine if the source is a URL or a local resource
   const isUrl = source.startsWith('http');
-  const localResourceName = !source.includes('/') ? `animations/${source}` : source;
+  
+  // Always prepend 'animations/' to local resources without paths
+  // This ensures we're pointing to the correct directory in the app bundle
+  const localResourceName = !isUrl ? 
+    (!source.includes('/') ? `animations/${source}` : source) : 
+    '';
   
   return (
     <View style={[styles.container, style]}>
