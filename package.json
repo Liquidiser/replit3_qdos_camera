@@ -25,7 +25,6 @@
     "@tsconfig/react-native": "^3.0.5",
     "@types/react": "~18.3.12",
     "@types/react-native-video": "^5.0.20",
-    "@types/react-test-renderer": "^19.0.0",
     "axios": "^1.8.4",
     "babel-jest": "^29.7.0",
     "eas-cli": "^16.1.0",
@@ -47,7 +46,6 @@
     "react-native-svg-transformer": "^1.5.0",
     "react-native-video": "^6.11.0",
     "react-native-vision-camera": "^4.6.4",
-    "react-test-renderer": "^18.3.1",
     "rive-react-native": "^9.2.0",
     "typescript": "^5.8.2"
   }
