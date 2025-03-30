@@ -1,0 +1,20 @@
+rootProject.name = 'QDOSCamera'
+
+apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
+include ':app'
+
+// Include React Native libraries that need explicit configuration
+include ':react-native-vision-camera'
+project(':react-native-vision-camera').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-vision-camera/android')
+
+include ':react-native-video'
+project(':react-native-video').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-video/android')
+
+include ':rive-react-native'
+project(':rive-react-native').projectDir = new File(rootProject.projectDir, '../node_modules/rive-react-native/android')
+
+include ':react-native-reanimated'
+project(':react-native-reanimated').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-reanimated/android')
+
+// Include all other modules automatically by React Native CLI
+includeBuild('../node_modules/@react-native/gradle-plugin')
