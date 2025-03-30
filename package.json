@@ -21,6 +21,7 @@
     "@react-navigation/bottom-tabs": "^7.3.3",
     "@react-navigation/native": "^7.0.19",
     "@react-navigation/stack": "^7.2.3",
+    "@testing-library/react-native": "^12.9.0",
     "@tsconfig/react-native": "^3.0.5",
     "@types/react": "~18.3.12",
     "@types/react-native-video": "^5.0.20",
@@ -46,7 +47,7 @@
     "react-native-svg-transformer": "^1.5.0",
     "react-native-video": "^6.11.0",
     "react-native-vision-camera": "^4.6.4",
-    "react-test-renderer": "^19.1.0",
+    "react-test-renderer": "^18.3.1",
     "rive-react-native": "^9.2.0",
     "typescript": "^5.8.2"
   }
