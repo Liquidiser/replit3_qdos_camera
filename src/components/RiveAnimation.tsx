@@ -68,7 +68,12 @@ const RiveAnimation: React.FC<RiveAnimationProps> = ({
     <View style={[styles.container, style]}>
       <Rive
         ref={riveRef}
-        resourceName={source}
+        resourceName={
+          // If source is a local file name (not a URL) with no path, prepend animations/ 
+          !source.startsWith('http') && !source.includes('/') 
+            ? `animations/${source}` 
+            : undefined
+        }
         url={source.startsWith('http') ? source : undefined}
         artboardName={artboardName}
         animationName={animationName}

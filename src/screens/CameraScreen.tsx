@@ -74,6 +74,11 @@ const CameraScreen: React.FC = () => {
         // Use appropriate animation based on device orientation
         const isPortrait = true; // You may want to detect actual orientation
         setAnimationSource(isPortrait ? data.port_riv : data.land_riv);
+      } else {
+        // Use local animations if API doesn't provide URLs
+        // This will help with testing in development
+        const isPortrait = true; // For actual implementation, detect orientation
+        setAnimationSource(isPortrait ? 'port.riv' : 'land.riv');
       }
       
       // Set QR detected state
