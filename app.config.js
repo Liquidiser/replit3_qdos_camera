@@ -1,5 +1,3 @@
-const { withAndroidPermissions } = require('@expo/config-plugins');
-
 // Base configuration
 const config = {
   name: "QDOS Camera",
@@ -57,5 +55,5 @@ const config = {
   ]
 };
 
-// Export the configuration with Android permissions
-module.exports = withAndroidPermissions(config);
+// Export the configuration
+module.exports = config;
