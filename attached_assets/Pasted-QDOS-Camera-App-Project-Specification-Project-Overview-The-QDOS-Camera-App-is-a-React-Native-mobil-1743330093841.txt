@@ -1,0 +1,196 @@
+QDOS Camera App - Project Specification
+Project Overview
+The QDOS Camera App is a React Native mobile application designed to revolutionize QR code interactions through an innovative, emotionally intelligent scanning experience. The app transforms routine QR code scanning into an engaging, interactive journey with rich multimedia and personalized feedback.
+
+Core Objectives
+Create a seamless, intuitive camera interface for QR code scanning
+Implement interactive Rive animations as camera overlays
+Enable photo and video capture with local storage capabilities
+Provide API integration for media uploads and retrieving QR code data
+Implement Twitter sharing functionality for user-generated content
+Technical Specifications
+Platform Requirements
+Primary Platform: Android (initial focus)
+Secondary Platform: iOS (future implementation)
+Minimum Android Version: 8.0 (API level 26)
+Native Modules Requirements
+Custom Native Modules: The application relies on custom native modules for QR code detection
+Build Environment Dependencies: Native modules must be properly included in source control
+Cross-IDE Compatibility: When opening the project in a new IDE, native modules need to be regenerated
+Module Generation Tools: react-native-link and additional native module tools required for setup
+Version Compatibility: Native modules must be compatible with React Native version
+Key Technologies
+Framework: React Native
+Build System: Expo EAS Build (for cloud builds)
+Camera: react-native-vision-camera
+Animations: rive-react-native
+Storage: react-native-fs
+Networking: axios, react-native-background-upload
+Navigation: react-navigation/native, react-navigation/stack, react-navigation/bottom-tabs
+UI Components: React Native Paper or React Native Elements (for consistent UI elements)
+Architecture Components
+API Services:
+
+apiClient.ts - Core API communication layer with error handling
+qrService.ts - QR code data retrieval and submission
+mediaService.ts - Media upload and processing
+twitterService.ts - Social sharing functionality
+UI Components:
+
+CameraView - Primary camera interface
+QRScanner - QR code detection and processing
+MediaPreview - Display and management of captured media
+RiveAnimation - Animation overlay renderer
+UploadProgress - Visual feedback for upload operations
+ShareButton - Social sharing interface
+Button - Consistent button component with variants
+Card - Container for content display
+Layout components - Grid, Container, Section for consistent spacing
+UI/UX Design System:
+
+Theme configuration with consistent colors, spacing, and typography
+Shared styles for common UI patterns
+Responsive layouts adapting to different device sizes
+Custom icon set for camera controls and actions
+Animation transitions between screens and states
+Hooks:
+
+useCamera - Camera control and configuration
+useQRScanner - QR code detection and processing
+useMediaCapture - Media capture and storage
+useTheme - Access to global theme variables
+State Management:
+
+AppContext - Global application state using React Context API
+Reducers - State transformation logic
+Navigation:
+
+AppNavigator - Screen routing and navigation flow
+Key Features
+QR Code Scanning:
+
+Real-time QR code detection
+Native QR detector module for Android
+API integration for QR code data retrieval
+Camera Functionality:
+
+High-quality photo capture
+Video recording with audio
+Flash control and camera settings
+Floating action buttons for camera controls
+Transparent overlays for QR detection indication
+Animation Overlays:
+
+Dynamic Rive animations based on QR code context
+Responsive to device orientation changes
+Interactive animation elements
+Media Management:
+
+Local storage of captured media
+Media browsing and selection
+Deletion and organization capabilities
+Swipeable media preview component
+Upload System:
+
+Background upload support
+Progress tracking and reporting
+Error handling and retry mechanisms
+Social Sharing:
+
+Twitter integration with custom messaging
+Direct app-to-app sharing when available
+Fallback to web sharing when needed
+UI Components & Layout:
+
+Consistent button variants (primary, secondary, icon buttons)
+Bottom sheet for capture options
+Floating action buttons for primary actions
+Cards for content display
+Grid layouts for media gallery
+Consistent spacing and hierarchy
+Design System
+The app will implement a cohesive design system with:
+
+Colors:
+
+Primary brand color
+Secondary accent colors
+Neutral background tones
+Status colors (success, error, warning, info)
+Text color hierarchy
+Typography:
+
+Heading styles (h1-h6)
+Body text variants
+Caption and auxiliary text
+Consistent font scaling
+Spacing:
+
+Standardized spacing scale (xs, sm, md, lg, xl)
+Consistent component padding and margins
+Grid-based layouts
+Component Styling:
+
+Button variants with consistent states (default, pressed, disabled)
+Input field styling
+Card and container styling
+List and grid layouts
+API Integration
+Base URL: https://qdos-api.liquidiser.co.uk/api
+Authentication: API key via x-api-key header
+Endpoints:
+QR code scanning and retrieval
+Media upload with signed URLs
+Twitter sharing integration
+Build & Deployment
+Build Options:
+
+EAS Cloud Builds - Using various scripts (improved-eas-build.sh, long-timeout-build.sh, etc.)
+Local Android Builds - Using Android SDK through build-android.sh
+External Build Preparation - Creating source package for building elsewhere
+Distribution:
+
+Direct APK installation
+Play Store deployment (future)
+Native Modules Handling:
+
+Native modules must be explicitly included in the build process and source control
+When building in a new IDE/environment, native modules need to be properly linked
+Scripts should verify and rebuild native modules if missing
+Build documentation must include steps to regenerate native modules
+Consider automating native module generation in the build pipeline
+User Flow
+User opens app and grants camera permissions
+App activates camera with scanning interface
+User scans QR code which is detected and processed
+App retrieves QR code data from API
+Relevant Rive animations are displayed as overlays
+User captures photo or video related to the QR code
+Media is stored locally and can be reviewed
+User uploads media to server
+User can share content via Twitter
+User can scan additional QR codes or review past media
+Implementation Priorities
+Core camera functionality with QR detection
+API integration for data retrieval
+Media capture and storage
+Animation overlay system
+Upload capabilities
+Social sharing features
+UI component library integration
+Design system implementation
+Development Status
+Core application structure implemented
+Android-specific development completed
+Build scripts and configuration optimized
+Authentication verified with EAS
+Build package prepared for external builds
+Next Steps
+Complete QR scanning module implementation
+Address native modules dependency issues for consistent builds across environments
+Implement UI component library (React Native Paper or React Native Elements)
+Create consistent design system and theme configuration
+Finalize camera view with Rive animation overlays
+Implement media upload and Twitter sharing
+Test on real Android devices
+Optimize performance and user experience
