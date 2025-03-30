@@ -3,7 +3,7 @@
   "displayName": "QDOS Camera App",
   "expo": {
     "name": "QDOS Camera App",
-    "slug": "qdos-camera-app",
+    "slug": "replit3qdoscamera",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
