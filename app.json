@@ -31,7 +31,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#000000"
       },
-      "package": "com.qdoscamera",
+      "package": "com.qdoscamera.app",
       "permissions": [
         "CAMERA",
         "RECORD_AUDIO",
