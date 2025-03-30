@@ -1,7 +1,7 @@
-import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 
 // API Base URL from the specification
-const BASE_URL = 'https://qdos-api.liquidiser.co.uk/api';
+const BASE_URL = 'https://api.qrservice.com/v1';
 
 // Create an Axios instance with default configuration
 const axiosInstance: AxiosInstance = axios.create({
@@ -18,9 +18,10 @@ const API_KEY = process.env.QDOS_API_KEY || '';
 
 // Request interceptor to add API key to all requests
 axiosInstance.interceptors.request.use(
-  (config: AxiosRequestConfig) => {
+  (config: InternalAxiosRequestConfig) => {
     if (config.headers) {
-      config.headers['x-api-key'] = API_KEY;
+      // Using Bearer token auth as per API specification
+      config.headers['Authorization'] = `Bearer ${API_KEY}`;
     }
     return config;
   },

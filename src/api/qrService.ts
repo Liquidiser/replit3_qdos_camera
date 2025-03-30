@@ -1,10 +1,16 @@
 import apiClient from './apiClient';
 
-// Define interfaces for QR code data
+// Define interfaces for QR code data based on API specification
 export interface QRCodeData {
   id: string;
+  qr_id: string;
   content: string;
   type: string;
+  subject: string;
+  context: string;
+  narrative: string;
+  land_riv: string;
+  port_riv: string;
   metadata?: {
     title?: string;
     description?: string;
@@ -15,18 +21,30 @@ export interface QRCodeData {
   timestamp: string;
 }
 
+interface ApiResponse<T> {
+  status: string;
+  data: T;
+}
+
 /**
  * Service for QR code-related API operations
  */
 const qrService = {
   /**
    * Retrieve QR code data from the API
-   * @param qrValue - Scanned QR code value
+   * @param qrValue - Scanned QR code value or ID
    * @returns QR code data object
    */
   getQRCodeData: async (qrValue: string): Promise<QRCodeData> => {
     try {
-      return await apiClient.get<QRCodeData>('/qr/decode', { code: qrValue });
+      // Extract qr_id from the QR value if needed
+      const qrId = qrValue.includes('/') ? qrValue.split('/').pop() : qrValue;
+      
+      // Call the details endpoint as specified in the API doc
+      const response = await apiClient.get<ApiResponse<QRCodeData>>(`/qr/details/${qrId}`);
+      
+      // Return the data property from the response
+      return response.data;
     } catch (error) {
       console.error('Error retrieving QR code data:', error);
       throw new Error('Failed to retrieve QR code data. Please try again.');
@@ -34,37 +52,48 @@ const qrService = {
   },
 
   /**
-   * Submit QR code scan event to the API
-   * @param qrId - QR code ID
-   * @param metadata - Additional metadata about the scan
+   * Submit a new QR code post to the API
+   * @param data - QR code post data
    */
-  submitQRScan: async (qrId: string, metadata: { [key: string]: any } = {}): Promise<void> => {
+  createQRPost: async (data: {
+    qr_code: string;
+    subject: string;
+    context: string;
+    narrative: string;
+    image_url: string;
+  }): Promise<void> => {
     try {
-      await apiClient.post('/qr/scan', {
-        qrId,
-        deviceInfo: {
-          platform: 'android',
-          timestamp: new Date().toISOString(),
-        },
-        ...metadata,
-      });
+      await apiClient.post('/qr/create', data);
     } catch (error) {
-      console.error('Error submitting QR scan event:', error);
-      // Non-critical error, don't throw
+      console.error('Error creating QR post:', error);
+      throw new Error('Failed to create QR post. Please try again.');
     }
   },
 
   /**
-   * Get animation data associated with a QR code
-   * @param animationId - ID of the animation to retrieve
-   * @returns Animation configuration object
+   * Generate a Twitter post link for sharing
+   * @param qrId - QR code ID
+   * @returns Object containing the Twitter link
    */
-  getQRAnimation: async (animationId: string): Promise<any> => {
+  generateTwitterLink: async (qrId: string): Promise<{ twitter_link: string }> => {
     try {
-      return await apiClient.get<any>(`/animations/${animationId}`);
+      return await apiClient.get<{ twitter_link: string }>('/twitter/generate-link', { reference_id: qrId });
     } catch (error) {
-      console.error('Error retrieving animation data:', error);
-      throw new Error('Failed to load animation. Please try again.');
+      console.error('Error generating Twitter link:', error);
+      throw new Error('Failed to generate sharing link. Please try again.');
+    }
+  },
+
+  /**
+   * Delete a QR code entry
+   * @param qrId - ID of the QR code to delete
+   */
+  deleteQRCode: async (qrId: string): Promise<void> => {
+    try {
+      await apiClient.delete(`/qr/${qrId}`);
+    } catch (error) {
+      console.error('Error deleting QR code:', error);
+      throw new Error('Failed to delete QR code. Please try again.');
     }
   },
 };

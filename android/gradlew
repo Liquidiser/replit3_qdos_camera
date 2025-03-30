@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# Simple wrapper script for gradle
+gradle "$@"

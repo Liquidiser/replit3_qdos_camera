@@ -1,6 +1,7 @@
 import apiClient from './apiClient';
 import { Platform } from 'react-native';
-import ReactNativeBlobUtil from 'react-native-blob-util';
+// Using RNFS for file transfers and uploads
+import RNFS from 'react-native-fs';
 
 export interface MediaUploadParams {
   qrId: string;
@@ -11,7 +12,14 @@ export interface MediaUploadParams {
   metadata?: { [key: string]: any };
 }
 
+// Updated response interface based on API specification
 export interface UploadUrlResponse {
+  s3url: string;
+  id: string;
+}
+
+// Mapped to our internal structure for compatibility
+export interface MappedUploadUrlResponse {
   uploadUrl: string;
   mediaId: string;
   fields?: { [key: string]: string };
@@ -26,16 +34,20 @@ const mediaService = {
    * @param params - Upload request parameters
    * @returns Upload URL and related data
    */
-  getUploadUrl: async (params: Omit<MediaUploadParams, 'filePath'>): Promise<UploadUrlResponse> => {
+  getUploadUrl: async (params: Omit<MediaUploadParams, 'filePath'>): Promise<MappedUploadUrlResponse> => {
     try {
-      return await apiClient.post<UploadUrlResponse>('/media/upload-url', {
-        qrId: params.qrId,
-        mediaType: params.mediaType,
-        fileName: params.fileName,
-        mimeType: params.mimeType,
-        metadata: params.metadata || {},
-        platform: Platform.OS,
+      // Using the endpoint from API specification
+      const response = await apiClient.get<UploadUrlResponse>('/api/media/get-signed-url', { 
+        'bucket-prefix': 'posts'
       });
+      
+      // Map the response to our internal structure
+      return {
+        uploadUrl: response.s3url,
+        mediaId: response.id,
+        // We'll assume fields is empty since the API doesn't specify any
+        fields: {}
+      };
     } catch (error) {
       console.error('Error getting upload URL:', error);
       throw new Error('Failed to prepare media upload. Please try again.');
@@ -70,30 +82,35 @@ const mediaService = {
         });
       }
 
-      // Use background upload for large files
-      return await ReactNativeBlobUtil.fetch(
-        'POST',
-        uploadData.uploadUrl,
-        {
+      // Use RNFS for upload
+      const uploadOptions = {
+        toUrl: uploadData.uploadUrl,
+        files: [{
+          name: 'file',
+          filename: params.fileName,
+          filepath: params.filePath,
+          filetype: params.mimeType
+        }],
+        method: 'POST',
+        headers: {
           'Content-Type': 'multipart/form-data',
         },
-        [
-          {
-            name: 'file',
-            filename: params.fileName,
-            type: params.mimeType,
-            data: ReactNativeBlobUtil.wrap(params.filePath),
-          },
-          ...Object.entries(uploadData.fields || {}).map(([key, value]) => ({
-            name: key,
-            data: value,
-          })),
-        ]
-      ).uploadProgress((written, total) => {
-        if (onProgress) {
-          onProgress(written / total);
+        fields: uploadData.fields || {},
+        begin: (res: any) => {
+          console.log('Upload has begun', res);
+        },
+        progress: (res: any) => {
+          if (res && onProgress) {
+            const written = res.bytesWritten || 0;
+            const total = res.totalBytes || 1; // Avoid division by zero
+            if (total > 0) {
+              onProgress(written / total);
+            }
+          }
         }
-      });
+      };
+      
+      return await RNFS.uploadFiles(uploadOptions).promise;
     } catch (error) {
       console.error('Error uploading media:', error);
       throw new Error('Failed to upload media. Please try again.');
@@ -101,18 +118,33 @@ const mediaService = {
   },
 
   /**
-   * Get metadata for a previously uploaded media
-   * @param mediaId - ID of the media to retrieve
-   * @returns Media metadata
+   * Create a new QR post with the uploaded media
+   * @param qrId The ID of the QR code
+   * @param imageUrl The URL of the uploaded image
+   * @param subject The subject/title
+   * @param context Additional context
+   * @param narrative Detailed narrative/description
    */
-  getMediaMetadata: async (mediaId: string): Promise<any> => {
+  createQRPost: async (
+    qrId: string, 
+    imageUrl: string, 
+    subject: string, 
+    context: string, 
+    narrative: string
+  ): Promise<void> => {
     try {
-      return await apiClient.get<any>(`/media/${mediaId}`);
+      await apiClient.post('/qr/create', {
+        qr_code: `https://qdos.bz/${qrId}`,
+        subject,
+        context,
+        narrative,
+        image_url: imageUrl
+      });
     } catch (error) {
-      console.error('Error retrieving media metadata:', error);
-      throw new Error('Failed to get media information. Please try again.');
+      console.error('Error creating QR post:', error);
+      throw new Error('Failed to create post with uploaded media. Please try again.');
     }
-  },
+  }
 };
 
 export default mediaService;

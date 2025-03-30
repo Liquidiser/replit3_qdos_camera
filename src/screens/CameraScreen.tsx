@@ -68,15 +68,16 @@ const CameraScreen: React.FC = () => {
       const data = await qrService.getQRCodeData(qrData);
       setActiveQRData(data);
       
-      // Check if QR code has an associated animation
-      if (data.metadata?.animationId) {
-        try {
-          const animationData = await qrService.getQRAnimation(data.metadata.animationId);
-          setAnimationSource(animationData.animationUrl);
-        } catch (error) {
-          console.error('Error loading animation:', error);
-        }
+      // Directly use Rive animation files if available in the response
+      // per API specification, land_riv and port_riv contain URLs to the Rive files
+      if (data.land_riv || data.port_riv) {
+        // Use appropriate animation based on device orientation
+        const isPortrait = true; // You may want to detect actual orientation
+        setAnimationSource(isPortrait ? data.port_riv : data.land_riv);
       }
+      
+      // Set QR detected state
+      setIsQRDetected(true);
     } catch (error) {
       console.error('Error fetching QR data:', error);
       Alert.alert(
@@ -149,8 +150,8 @@ const CameraScreen: React.FC = () => {
         return false;
       };
 
-      BackHandler.addEventListener('hardwareBackPress', onBackPress);
-      return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+      const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+      return () => subscription.remove();
     }, [capturedMediaPath, isQRDetected])
   );
 
