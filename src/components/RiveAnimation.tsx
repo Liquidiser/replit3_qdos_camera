@@ -64,23 +64,35 @@ const RiveAnimation: React.FC<RiveAnimationProps> = ({
     };
   }, [autoPlay]);
 
+  // Determine if the source is a URL or a local resource
+  const isUrl = source.startsWith('http');
+  const localResourceName = !source.includes('/') ? `animations/${source}` : source;
+  
   return (
     <View style={[styles.container, style]}>
-      <Rive
-        ref={riveRef}
-        resourceName={
-          // If source is a local file name (not a URL) with no path, prepend animations/ 
-          !source.startsWith('http') && !source.includes('/') 
-            ? `animations/${source}` 
-            : undefined
-        }
-        url={source.startsWith('http') ? source : undefined}
-        artboardName={artboardName}
-        animationName={animationName}
-        stateMachineName={stateMachineName}
-        fit={fit}
-        style={styles.animation}
-      />
+      {isUrl ? (
+        // For remote URLs
+        <Rive
+          ref={riveRef}
+          url={source}
+          artboardName={artboardName}
+          animationName={animationName}
+          stateMachineName={stateMachineName}
+          fit={fit}
+          style={styles.animation}
+        />
+      ) : (
+        // For local resources
+        <Rive
+          ref={riveRef}
+          resourceName={localResourceName}
+          artboardName={artboardName}
+          animationName={animationName}
+          stateMachineName={stateMachineName}
+          fit={fit}
+          style={styles.animation}
+        />
+      )}
     </View>
   );
 };
