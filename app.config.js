@@ -1,7 +1,7 @@
 // Base configuration
 const config = {
   name: "QDOS Camera",
-  slug: "qdos-camera",
+  slug: "replit3qdoscamera",
   version: "1.0.0",
   orientation: "portrait",
   icon: "./assets/icon.png",
@@ -26,8 +26,7 @@ const config = {
       foregroundImage: "./assets/adaptive-icon.png",
       backgroundColor: "#FFFFFF"
     },
-    package: "com.qdoscamera",
-    versionCode: 1,
+    
     permissions: [
       "CAMERA",
       "RECORD_AUDIO",
@@ -40,7 +39,7 @@ const config = {
   },
   extra: {
     eas: {
-      projectId: "your-eas-project-id" // This will be replaced when you run eas build
+      projectId: "6ceb2eb2-a4c9-4361-aa43-05675791799a" // This will be replaced when you run eas build
     }
   },
   plugins: [
