@@ -7,6 +7,7 @@ import {
   Text, 
   Alert,
   BackHandler,
+  Dimensions,
 } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -25,6 +26,7 @@ const CameraScreen: React.FC = () => {
   const [capturedMediaPath, setCapturedMediaPath] = useState<string | null>(null);
   const [capturedMediaType, setCapturedMediaType] = useState<'photo' | 'video'>('photo');
   const [animationSource, setAnimationSource] = useState<string | null>(null);
+  const [isPortrait, setIsPortrait] = useState<boolean>(true);
   
   const { 
     isQRDetected, 
@@ -35,6 +37,37 @@ const CameraScreen: React.FC = () => {
     setIsUploadingMedia,
     setUploadProgress,
   } = useAppContext();
+  
+  // Detect device orientation
+  useEffect(() => {
+    const detectOrientation = () => {
+      const { width, height } = Dimensions.get('window');
+      setIsPortrait(height > width);
+    };
+    
+    // Initial detection
+    detectOrientation();
+    
+    // Listen for orientation changes
+    const subscription = Dimensions.addEventListener('change', detectOrientation);
+    
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+  
+  // Update animation source when orientation changes
+  useEffect(() => {
+    if (activeQRData && isQRDetected) {
+      // If API provided animations, use those
+      if (activeQRData.land_riv || activeQRData.port_riv) {
+        setAnimationSource(isPortrait ? activeQRData.port_riv : activeQRData.land_riv);
+      } else {
+        // Otherwise use local animations
+        setAnimationSource(isPortrait ? 'port.riv' : 'land.riv');
+      }
+    }
+  }, [isPortrait, activeQRData, isQRDetected]);
   
   const {
     isUploading,
@@ -71,13 +104,11 @@ const CameraScreen: React.FC = () => {
       // Directly use Rive animation files if available in the response
       // per API specification, land_riv and port_riv contain URLs to the Rive files
       if (data.land_riv || data.port_riv) {
-        // Use appropriate animation based on device orientation
-        const isPortrait = true; // You may want to detect actual orientation
+        // Use appropriate animation based on detected device orientation
         setAnimationSource(isPortrait ? data.port_riv : data.land_riv);
       } else {
         // Use local animations if API doesn't provide URLs
         // This will help with testing in development
-        const isPortrait = true; // For actual implementation, detect orientation
         setAnimationSource(isPortrait ? 'port.riv' : 'land.riv');
       }
       
