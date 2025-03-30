@@ -1,0 +1,54 @@
+# EAS Build Scripts for QDOS Camera App
+
+To use EAS for building your React Native application, you can run the following commands after installing the EAS CLI (`npm install -g eas-cli`):
+
+## Initialize EAS for your project
+```
+eas init
+```
+
+## Configure your build profiles
+The eas.json file already contains the build profiles for development, preview, and production.
+
+## Build Commands
+
+### Build a development APK (with development client)
+```
+eas build -p android --profile development
+```
+
+### Build a preview APK (internal distribution)
+```
+eas build -p android --profile preview
+```
+
+### Build a production app bundle
+```
+eas build -p android --profile production
+```
+
+## Updating your app
+
+### Submit a new build to Google Play
+```
+eas submit -p android
+```
+
+## Additional Commands
+
+### Update your project configuration
+```
+eas update:configure
+```
+
+### Create build credentials
+```
+eas credentials
+```
+
+Remember to set up your Expo/EAS account and authenticate with:
+```
+eas login
+```
+
+For more information, visit: https://docs.expo.dev/build/introduction/
