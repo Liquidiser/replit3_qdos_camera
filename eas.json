@@ -14,20 +14,29 @@
       "ios": {
         "simulator": true
       },
-      "prebuildCommand": "mkdir -p node_modules/react-native/ReactAndroid/ && cp -n node_modules/react-native/ReactAndroid/gradle.properties node_modules/react-native/ReactAndroid/ || echo 'File already exists'"
+      "env": {
+        "REACT_NATIVE_GRADLE_PROPERTIES_FIX": "true"
+      },
+      "prebuildCommand": "./eas-build-pre-install.sh && (test -f ./eas-post-install.sh && ./eas-post-install.sh || echo 'No post-install script found')"
     },
     "preview": {
       "distribution": "internal",
       "android": {
         "buildType": "apk"
       },
-      "prebuildCommand": "mkdir -p node_modules/react-native/ReactAndroid/ && cp -n node_modules/react-native/ReactAndroid/gradle.properties node_modules/react-native/ReactAndroid/ || echo 'File already exists'"
+      "env": {
+        "REACT_NATIVE_GRADLE_PROPERTIES_FIX": "true"
+      },
+      "prebuildCommand": "./eas-build-pre-install.sh && (test -f ./eas-post-install.sh && ./eas-post-install.sh || echo 'No post-install script found')"
     },
     "production": {
       "android": {
         "buildType": "app-bundle"
       },
-      "prebuildCommand": "mkdir -p node_modules/react-native/ReactAndroid/ && cp -n node_modules/react-native/ReactAndroid/gradle.properties node_modules/react-native/ReactAndroid/ || echo 'File already exists'"
+      "env": {
+        "REACT_NATIVE_GRADLE_PROPERTIES_FIX": "true"
+      },
+      "prebuildCommand": "./eas-build-pre-install.sh && (test -f ./eas-post-install.sh && ./eas-post-install.sh || echo 'No post-install script found')"
     }
   },
   "submit": {
