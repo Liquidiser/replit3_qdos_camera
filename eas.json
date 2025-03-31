@@ -13,18 +13,21 @@
       },
       "ios": {
         "simulator": true
-      }
+      },
+      "prebuildCommand": "mkdir -p node_modules/react-native/ReactAndroid/ && cp -n node_modules/react-native/ReactAndroid/gradle.properties node_modules/react-native/ReactAndroid/ || echo 'File already exists'"
     },
     "preview": {
       "distribution": "internal",
       "android": {
         "buildType": "apk"
-      }
+      },
+      "prebuildCommand": "mkdir -p node_modules/react-native/ReactAndroid/ && cp -n node_modules/react-native/ReactAndroid/gradle.properties node_modules/react-native/ReactAndroid/ || echo 'File already exists'"
     },
     "production": {
       "android": {
         "buildType": "app-bundle"
-      }
+      },
+      "prebuildCommand": "mkdir -p node_modules/react-native/ReactAndroid/ && cp -n node_modules/react-native/ReactAndroid/gradle.properties node_modules/react-native/ReactAndroid/ || echo 'File already exists'"
     }
   },
   "submit": {
