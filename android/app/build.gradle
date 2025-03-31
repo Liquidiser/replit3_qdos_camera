@@ -17,6 +17,8 @@ react {
     //   The cli.js file which is the React Native CLI entrypoint. Default is ../node_modules/react-native/cli.js
     cliFile = file("../node_modules/react-native/cli.js")
 
+    autolinkLibrariesWithApp()
+
     /* Variants */
     //   The list of variants to that are debuggable. For those we're going to
     //   skip the bundling of the JS bundle and the assets. By default the first variant listed in the debuggableVariants is enabled.
@@ -120,19 +122,18 @@ android {
     }
 
     // applicationVariants are e.g. debug, release
-    applicationVariants.all { variant ->
-        variant.outputs.each { output ->
-            // For each separate APK per architecture, set a unique version code as described here:
-            // https://developer.android.com/studio/build/configure-apk-splits.html
-            // Example: versionCode 1 will generate 1001 for armeabi-v7a, 1002 for x86, etc.
-            def versionCodes = ["armeabi-v7a": 1, "x86": 2, "arm64-v8a": 3, "x86_64": 4]
-            def abi = output.getFilter(OutputFile.ABI)
-            if (abi != null) {  // null for the universal-debug, universal-release variants
-                output.versionCodeOverride =
-                        defaultConfig.versionCode * 1000 + versionCodes.get(abi)
-            }
+   applicationVariants.all { variant ->
+    variant.outputs.each { output ->
+        // For each separate APK per architecture, set a unique version code as described here:
+        // https://developer.android.com/studio/build/configure-apk-splits.html
+        // Example: versionCode 1 will generate 1001 for armeabi-v7a, 1002 for x86, etc.
+        def versionCodes = ["armeabi-v7a": 1, "x86": 2, "arm64-v8a": 3, "x86_64": 4]
+        def abi = output.getFilter("ABI")
+        if (abi != null) {  // null for the universal-debug, universal-release variants
+            output.versionCodeOverride = defaultConfig.versionCode * 1000 + versionCodes.get(abi)
         }
     }
+}
 }
 
 dependencies {
@@ -169,4 +170,9 @@ dependencies {
     debugImplementation("com.facebook.flipper:flipper-fresco-plugin:${FLIPPER_VERSION}")
 }
 
-apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
+def nativeModulesScript = file("../node_modules/react-native/scripts/native_modules.gradle")
+    if (nativeModulesScript.exists()) {
+        apply from: nativeModulesScript
+    } else {
+        println "Warning: native_modules.gradle not found at expected path."
+}

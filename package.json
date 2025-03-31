@@ -48,5 +48,8 @@
     "react-native-vision-camera": "^4.6.4",
     "rive-react-native": "^9.2.0",
     "typescript": "^5.8.2"
+  },
+  "devDependencies": {
+    "babel-plugin-module-resolver": "^5.0.2"
   }
 }

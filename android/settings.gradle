@@ -1,7 +1,21 @@
-rootProject.name = 'QDOSCamera'
 
+
+
+pluginManagement { 
+    includeBuild("../node_modules/@react-native/gradle-plugin") }
+
+
+plugins { 
+    id("com.facebook.react.settings") }
+
+
+extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
+
+rootProject.name = 'QDOSCamera'
 // Manually configure individual libraries instead of using cli-platform-android
 include ':app'
+
+
 
 // Include React Native libraries that need explicit configuration
 include ':react-native-vision-camera'
