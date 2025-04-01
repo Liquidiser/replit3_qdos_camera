@@ -170,9 +170,12 @@ dependencies {
     debugImplementation("com.facebook.flipper:flipper-fresco-plugin:${FLIPPER_VERSION}")
 }
 
-def nativeModulesScript = file("../node_modules/react-native/scripts/native_modules.gradle")
-    if (nativeModulesScript.exists()) {
-        apply from: nativeModulesScript
-    } else {
-        println "Warning: native_modules.gradle not found at expected path."
+plugins {
+    id 'java'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
