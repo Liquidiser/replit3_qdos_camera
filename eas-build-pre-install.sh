@@ -13,6 +13,17 @@ react.internal.publishingGroup=com.facebook.react
 
 android.useAndroidX=true
 
+# Java and Gradle configuration
+org.gradle.jvmargs=-Xmx2048m -XX:MaxMetaspaceSize=512m
+org.gradle.daemon=true
+org.gradle.parallel=true
+org.gradle.caching=true
+
+# Java 17 configuration
+java.sourceCompatibility=17
+java.targetCompatibility=17
+kotlin.jvm.target.validation.mode=warning
+
 # We want to have more fine grained control on the Java version for
 # ReactAndroid, therefore we disable RGNP Java version alignment mechanism
 react.internal.disableJavaVersionAlignment=true
