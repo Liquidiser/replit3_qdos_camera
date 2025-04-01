@@ -8,50 +8,50 @@ const config = {
   splash: {
     image: "./assets/splash.png",
     resizeMode: "contain",
-    backgroundColor: "#ffffff"
+    backgroundColor: "#ffffff",
   },
   updates: {
-    fallbackToCacheTimeout: 0
+    fallbackToCacheTimeout: 0,
   },
-  assetBundlePatterns: [
-    "**/*"
-  ],
+  assetBundlePatterns: ["**/*"],
   ios: {
     supportsTablet: true,
     bundleIdentifier: "com.qdoscamera",
-    buildNumber: "1.0.0"
+    buildNumber: "1.0.0",
   },
   android: {
+    package: "com.qdoscamera",
     adaptiveIcon: {
       foregroundImage: "./assets/adaptive-icon.png",
-      backgroundColor: "#FFFFFF"
+      backgroundColor: "#FFFFFF",
     },
-    
+
     permissions: [
       "CAMERA",
       "RECORD_AUDIO",
       "READ_EXTERNAL_STORAGE",
-      "WRITE_EXTERNAL_STORAGE"
-    ]
+      "WRITE_EXTERNAL_STORAGE",
+    ],
   },
   web: {
-    favicon: "./assets/favicon.png"
+    favicon: "./assets/favicon.png",
   },
   extra: {
     eas: {
-      projectId: "6ceb2eb2-a4c9-4361-aa43-05675791799a" // This will be replaced when you run eas build
-    }
+      projectId: "6ceb2eb2-a4c9-4361-aa43-05675791799a", // This will be replaced when you run eas build
+    },
   },
   plugins: [
     [
       "react-native-vision-camera",
       {
-        "cameraPermissionText": "QDOS Camera needs access to your camera",
-        "enableMicrophonePermission": true,
-        "microphonePermissionText": "QDOS Camera needs access to your microphone for videos"
-      }
-    ]
-  ]
+        cameraPermissionText: "QDOS Camera needs access to your camera",
+        enableMicrophonePermission: true,
+        microphonePermissionText:
+          "QDOS Camera needs access to your microphone for videos",
+      },
+    ],
+  ],
 };
 
 // Export the configuration
