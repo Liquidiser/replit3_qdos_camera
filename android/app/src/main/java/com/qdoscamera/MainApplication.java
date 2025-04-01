@@ -21,6 +21,9 @@ import com.facebook.react.config.ReactFeatureFlags;
 import java.util.List;
 import java.util.Collections;
 
+// Import for Flipper in debug mode
+import com.qdoscamera.ReactNativeFlipper;
+
 public class MainApplication extends Application implements ReactApplication {
 
   private final ReactNativeHost mReactNativeHost =

@@ -1,6 +1,6 @@
 pluginManagement { 
     repositories {
-<<<<<<< HEAD
+
                 gradlePluginPortal()
                 google()
                 mavenCentral()
@@ -10,7 +10,7 @@ plugins {
     id("com.facebook.react.settings") }
 
 extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
-=======
+
         gradlePluginPortal()
         google()
         mavenCentral()

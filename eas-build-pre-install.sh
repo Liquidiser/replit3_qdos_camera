@@ -28,6 +28,18 @@ kotlin.jvm.target.validation.mode=warning
 # ReactAndroid, therefore we disable RGNP Java version alignment mechanism
 react.internal.disableJavaVersionAlignment=true
 
+# New Architecture and Fabric configuration
+newArchEnabled=true
+hermesEnabled=true
+
+# Surface Registry Configuration for Fabric
+react.fabric.useSurfaceRegistryForComponents=true
+react.fabric.enableSurfaceRegistryBinding=true
+react.fabric.enableBindingSurfaceRegistration=true
+react.fabric.enableBridgelessSurfaceAttributeRegistry=true
+react.fabric.alwaysCreateSurfaceRegistryBinding=true
+react.fabric.earlyInitGlobalObject=true
+
 # Binary Compatibility Validator properties
 binaryCompatibilityValidator.ignoredClasses=com.facebook.react.BuildConfig
 binaryCompatibilityValidator.ignoredPackages=com.facebook.debug,\\

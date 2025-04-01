@@ -25,7 +25,6 @@ const config = {
       foregroundImage: "./assets/adaptive-icon.png",
       backgroundColor: "#FFFFFF",
     },
-    package: "com.qdoscamera",
     versionCode: 1,
     permissions: [
       "CAMERA",
@@ -33,6 +32,11 @@ const config = {
       "READ_EXTERNAL_STORAGE",
       "WRITE_EXTERNAL_STORAGE",
     ],
+    jsEngine: "hermes",
+    fabric: {
+      enabled: true,
+      surfaceRegistryBinding: true
+    }
   },
   web: {
     favicon: "./assets/favicon.png",
