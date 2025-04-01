@@ -139,6 +139,28 @@ The app includes two local Rive animation files:
 
 When a QR code is scanned, the app will automatically select the appropriate animation based on the device orientation. If the API returns custom animation URLs in the QR code data, those will be used instead of the local files.
 
+#### Animation System Improvements
+
+The animation system has been enhanced with the following improvements:
+
+1. **Animation Utilities**: A new `src/utils/animations.ts` file has been added to provide utility functions for:
+   - Determining if an animation source is a URL or local file
+   - Processing animation paths consistently
+   - Selecting orientation-appropriate animations
+
+2. **RiveAnimation Component**: The component has been updated to:
+   - Use the new utility functions for source detection
+   - Provide better logging for animation source resolution
+   - Export reusable styles for consistent usage
+   - Handle both local and remote animation sources seamlessly
+
+3. **CameraScreen Integration**: The camera screen has been updated to:
+   - Use the animation utilities for consistent handling
+   - Support dynamic switching between portrait and landscape animations
+   - Properly handle orientation changes during app usage
+
+These enhancements improve code maintainability and provide a more consistent experience when using animations throughout the app.
+
 ## License
 
 MIT

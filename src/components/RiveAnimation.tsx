@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { StyleSheet, View, Dimensions, AppState } from 'react-native';
 import Rive, { RiveRef, Fit } from 'rive-react-native';
+import { isAnimationUrl } from '../utils/animations';
 
 interface RiveAnimationProps {
   source: string;
@@ -65,13 +66,14 @@ const RiveAnimation: React.FC<RiveAnimationProps> = ({
   }, [autoPlay]);
 
   // Determine if the source is a URL or a local resource
-  const isUrl = source.startsWith('http');
+  const isUrl = isAnimationUrl(source);
   
-  // Always prepend 'animations/' to local resources without paths
-  // This ensures we're pointing to the correct directory in the app bundle
+  // Format local file paths to point to the correct location in the app bundle
   const localResourceName = !isUrl ? 
     (!source.includes('/') ? `animations/${source}` : source) : 
     '';
+  
+  console.log(`[RiveAnimation] Loading animation: ${isUrl ? source : localResourceName} (${isUrl ? 'remote' : 'local'})`);
   
   return (
     <View style={[styles.container, style]}>
@@ -116,4 +118,5 @@ const styles = StyleSheet.create({
   },
 });
 
+export { styles as riveAnimationStyles };
 export default RiveAnimation;

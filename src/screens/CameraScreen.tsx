@@ -17,6 +17,7 @@ import MediaPreview from '../components/MediaPreview';
 import qrService from '../api/qrService';
 import { useAppContext } from '../context/AppContext';
 import useMediaCapture from '../hooks/useMediaCapture';
+import { getOrientationAwareAnimationSource } from '../utils/animations';
 
 type CameraScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Main'>;
 
@@ -59,13 +60,14 @@ const CameraScreen: React.FC = () => {
   // Update animation source when orientation changes
   useEffect(() => {
     if (activeQRData && isQRDetected) {
-      // If API provided animations, use those
-      if (activeQRData.land_riv || activeQRData.port_riv) {
-        setAnimationSource(isPortrait ? activeQRData.port_riv : activeQRData.land_riv);
-      } else {
-        // Otherwise use local animations from assets/animations folder
-        setAnimationSource(isPortrait ? 'port.riv' : 'land.riv');
-      }
+      // Get and set the appropriate animation based on orientation
+      setAnimationSource(
+        getOrientationAwareAnimationSource(
+          activeQRData.port_riv,
+          activeQRData.land_riv,
+          isPortrait
+        )
+      );
     }
   }, [isPortrait, activeQRData, isQRDetected]);
   
@@ -101,16 +103,14 @@ const CameraScreen: React.FC = () => {
       const data = await qrService.getQRCodeData(qrData);
       setActiveQRData(data);
       
-      // Directly use Rive animation files if available in the response
-      // per API specification, land_riv and port_riv contain URLs to the Rive files
-      if (data.land_riv || data.port_riv) {
-        // Use appropriate animation based on detected device orientation
-        setAnimationSource(isPortrait ? data.port_riv : data.land_riv);
-      } else {
-        // Use local animations from assets/animations folder if API doesn't provide URLs
-        // This will help with testing in development
-        setAnimationSource(isPortrait ? 'port.riv' : 'land.riv');
-      }
+      // Use the animation utilities to get the correct animation source
+      setAnimationSource(
+        getOrientationAwareAnimationSource(
+          data.port_riv,
+          data.land_riv,
+          isPortrait
+        )
+      );
       
       // Set QR detected state
       setIsQRDetected(true);

@@ -7,7 +7,7 @@ echo "Running EAS Build Pre-Install script..."
 mkdir -p ./temp-gradle-props
 
 # Create a gradle.properties file if we need to
-cat > ./temp-gradle-props/gradle.properties <<EOL
+cat > ./temp-gradle-props/gradle.properties <<'EOL'
 VERSION_NAME=0.76.7
 react.internal.publishingGroup=com.facebook.react
 
@@ -62,7 +62,7 @@ binaryCompatibilityValidator.outputApiFileName=ReactAndroid
 EOL
 
 # Create a post-install script that will be run after npm dependencies are installed
-cat > ./eas-post-install.sh <<EOL
+cat > ./eas-post-install.sh <<'EOL'
 #!/bin/bash
 echo "Running EAS Post-Install script..."
 

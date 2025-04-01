@@ -20,6 +20,31 @@ app.get('/api/project-info', (req, res) => {
     const appConfigJs = fs.readFileSync('./app.config.js', 'utf8');
     const androidPackage = appConfigJs.match(/package:\s*["']([^"']+)["']/);
     
+    // Check for animation files
+    const animationInfo = {
+      hasAnimationsDir: fs.existsSync('./assets/animations'),
+      animationFiles: [],
+      attachedAnimations: []
+    };
+    
+    // List animation files from attached_assets directory
+    try {
+      const attachedFiles = fs.readdirSync('./attached_assets');
+      animationInfo.attachedAnimations = attachedFiles.filter(file => file.endsWith('.riv'));
+    } catch (e) {
+      console.log('Could not read attached_assets directory:', e.message);
+    }
+    
+    // Check if animations directory exists and list files
+    try {
+      if (animationInfo.hasAnimationsDir) {
+        animationInfo.animationFiles = fs.readdirSync('./assets/animations')
+          .filter(file => file.endsWith('.riv'));
+      }
+    } catch (e) {
+      console.log('Could not read animations directory:', e.message);
+    }
+    
     res.json({
       name: packageJson.name,
       version: packageJson.version,
@@ -33,6 +58,13 @@ app.get('/api/project-info', (req, res) => {
         hasMetroConfig: fs.existsSync('./metro.config.js'),
         hasAndroidFolder: fs.existsSync('./android'),
         hasIOSFolder: fs.existsSync('./ios')
+      },
+      animations: animationInfo,
+      utils: {
+        hasAnimationsUtil: fs.existsSync('./src/utils/animations.ts'),
+        componentsInfo: {
+          riveComponent: fs.existsSync('./src/components/RiveAnimation.tsx')
+        }
       }
     });
   } catch (error) {

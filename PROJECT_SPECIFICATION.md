@@ -62,9 +62,11 @@ The QDOS Camera App is a React Native mobile application developed primarily for
 
 ### 6. Rive Animations
 - Dynamic loading of Rive animations based on QR code data
-- Support for both portrait and landscape orientations
+- Support for both portrait and landscape orientations with automatic switching
 - Interactive animation states tied to user actions
 - Optimized animation performance
+- Unified animation utilities for consistent handling of local and remote animation sources
+- Intelligent fallback to local animations when network resources are unavailable
 
 ### 7. Social Sharing
 - Direct sharing to social media platforms
@@ -371,4 +373,13 @@ zipStorePath=wrapper/dists
 
 This specification is a living document and may be updated as the project evolves.
 
-Last Updated: March 31, 2025
+## Recent Updates
+
+### April 1, 2025 - Animation System Enhancements
+- Added animations utility module for consistent handling of local and remote animations
+- Updated RiveAnimation component to leverage new utilities
+- Improved orientation detection and animation source selection
+- Added support for fallback animations when network resources are unavailable
+- Enhanced documentation for animation usage in the application
+
+Last Updated: April 1, 2025
