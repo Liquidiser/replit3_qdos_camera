@@ -1,7 +1,7 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
-const { exec } = require('child_process');
+const { exec, spawn } = require('child_process');
 
 const app = express();
 const PORT = 5000;
@@ -40,109 +40,11 @@ app.get('/api/project-info', (req, res) => {
   }
 });
 
-// API endpoint to get app status
-app.get('/api/status', (req, res) => {
-  res.json({
-    status: 'ok',
-    message: 'QDOS Camera App Debug Server is running',
-    serverTime: new Date().toISOString(),
-    environment: {
-      nodeVersion: process.version,
-      platform: process.platform,
-      arch: process.arch,
-      env: {
-        NODE_ENV: process.env.NODE_ENV || 'not set',
-        ANDROID_HOME: process.env.ANDROID_HOME || 'not set',
-        ANDROID_SDK_ROOT: process.env.ANDROID_SDK_ROOT || 'not set'
-      }
-    }
-  });
-});
+// API endpoint to get app status is now defined further down in the file
 
-// Endpoint to run Metro bundler
-app.post('/api/start-metro', (req, res) => {
-  console.log('Attempting to start Metro bundler...');
-  
-  const metroProcess = exec('npx react-native start --port 8081', (error, stdout, stderr) => {
-    if (error) {
-      console.error(`Metro bundler error: ${error.message}`);
-      return;
-    }
-    console.log(`Metro bundler output: ${stdout}`);
-    console.error(`Metro bundler stderr: ${stderr}`);
-  });
-  
-  metroProcess.stdout.on('data', (data) => {
-    console.log(`Metro: ${data}`);
-  });
-  
-  metroProcess.stderr.on('data', (data) => {
-    console.error(`Metro Error: ${data}`);
-  });
-  
-  res.json({
-    message: 'Metro bundler started',
-    success: true
-  });
-});
+// Endpoint to run Metro bundler - replaced with enhanced version below
 
-// Endpoint to run Android build with specific surface registry error handling
-app.post('/api/build-android', (req, res) => {
-  console.log('Attempting to build Android app...');
-  
-  // First, check for common build issues
-  const checkBuildCmd = 'grep -r "SurfaceRegistryBinding" android/app/src/main/java || echo "Not found"';
-  
-  exec(checkBuildCmd, (error, stdout, stderr) => {
-    console.log('Checking for SurfaceRegistryBinding references:', stdout || 'None found');
-    
-    // Now run the actual build
-    const androidProcess = exec('npx react-native run-android', (error, stdout, stderr) => {
-      if (error) {
-        console.error(`Android build error: ${error.message}`);
-        
-        // Check specifically for SurfaceRegistry errors
-        if (stderr && stderr.includes('SurfaceRegistryBinding::StartService failed')) {
-          console.error('Detected SurfaceRegistryBinding error - This is likely due to React Native Fabric initialization issues');
-          
-          // Log additional diagnostic information
-          exec('adb logcat -d | grep -i "SurfaceRegistry"', (err, logOutput) => {
-            if (!err && logOutput) {
-              console.log('Related logs from device:', logOutput);
-            }
-          });
-        }
-        return;
-      }
-      console.log(`Android build output: ${stdout}`);
-      console.error(`Android build stderr: ${stderr}`);
-    });
-    
-    androidProcess.stdout.on('data', (data) => {
-      console.log(`Android: ${data}`);
-      
-      // Watch for successful initialization of Surface Registry
-      if (data.includes('SurfaceRegistry') || data.includes('ReactNative')) {
-        console.log('SurfaceRegistry/ReactNative related output detected');
-      }
-    });
-    
-    androidProcess.stderr.on('data', (data) => {
-      console.error(`Android Error: ${data}`);
-      
-      // Flag surface registry binding errors specifically
-      if (data.includes('SurfaceRegistryBinding') || data.includes('Global was not installed')) {
-        console.error('CRITICAL: SurfaceRegistryBinding error detected!');
-      }
-    });
-  });
-  
-  res.json({
-    message: 'Android build started with enhanced error monitoring',
-    success: true,
-    note: 'Watch logs for "SurfaceRegistryBinding" related issues'
-  });
-});
+// Endpoint to run Android build - replaced with enhanced version below
 
 // Dedicated endpoint to diagnose and potentially fix Surface Registry issues
 app.post('/api/fix-surface-registry', (req, res) => {
@@ -217,6 +119,107 @@ app.get('/api/check-files', (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+// Enhanced Fabric architecture diagnostics endpoint
+app.get('/api/fabric-diagnostics', (req, res) => {
+  console.log('Running enhanced Fabric architecture diagnostics...');
+  
+  exec('node fabric-check.js', (error, stdout, stderr) => {
+    if (error) {
+      console.error(`Fabric check error: ${error.message}`);
+      return res.status(500).json({ 
+        error: error.message,
+        stdout: stdout,
+        stderr: stderr
+      });
+    }
+    
+    // Parse the results for a more structured response
+    const results = {
+      appJsonFabric: stdout.includes('✅ Fabric enabled: true'),
+      appJsonSurfaceRegistry: stdout.includes('✅ SurfaceRegistryBinding: true'),
+      appConfigFabric: stdout.includes('✅ Fabric and SurfaceRegistryBinding appear to be configured'),
+      gradleNewArch: stdout.includes('✅ New Architecture enabled: true'),
+      gradleSurfaceRegistry: stdout.includes('✅ SurfaceRegistryBinding enabled: true'),
+      easScriptConfig: stdout.includes('✅ EAS Pre-Install script has proper Fabric configuration'),
+      rawOutput: stdout,
+      timestamp: new Date().toISOString()
+    };
+    
+    res.json(results);
+  });
+});
+
+// Get project status information
+app.get('/api/status', (req, res) => {
+  console.log('Getting server status...');
+  
+  const status = {
+    node_version: process.version,
+    os: process.platform,
+    memory_usage: process.memoryUsage(),
+    uptime: process.uptime(),
+    env: {
+      NODE_ENV: process.env.NODE_ENV || 'development',
+      PORT: process.env.PORT || '5000'
+    },
+    workflows: {
+      server: 'running'
+    },
+    timestamp: new Date().toISOString()
+  };
+  
+  // Check if Android workflow is running
+  exec('ps -ef | grep "gradlew assembleDebug" | grep -v grep', (error, stdout) => {
+    status.workflows.android = stdout ? 'running' : 'stopped';
+    res.json(status);
+  });
+});
+
+// The '/api/check-files' endpoint is already defined above
+
+// Start Metro bundler
+app.post('/api/start-metro', (req, res) => {
+  console.log('Starting Metro bundler...');
+  
+  const metroProcess = spawn('npx', ['react-native', 'start'], { 
+    detached: true,
+    stdio: 'ignore'
+  });
+  
+  metroProcess.unref();
+  
+  res.json({ 
+    message: 'Metro bundler started in background',
+    pid: metroProcess.pid,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Build Android app
+app.post('/api/build-android', (req, res) => {
+  console.log('Building Android app...');
+  
+  exec('cd android && ./gradlew assembleDebug', (error, stdout, stderr) => {
+    if (error) {
+      console.error(`Android build error: ${error.message}`);
+      return res.status(500).json({ 
+        success: false,
+        error: error.message,
+        stderr: stderr
+      });
+    }
+    
+    res.json({
+      success: true,
+      message: 'Android app built successfully',
+      logs: stdout,
+      timestamp: new Date().toISOString()
+    });
+  });
+});
+
+// Fix Surface Registry issues - already defined above
 
 // Serve index.html for the root path
 app.get('/', (req, res) => {

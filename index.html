@@ -188,9 +188,14 @@
                 <h3>Surface Registry Binding Issues</h3>
                 <p>This tool diagnoses and attempts to fix the "SurfaceRegistryBinding::StartService failed" error that commonly occurs in React Native Android apps.</p>
                 <button id="diagnoseSurfaceBtn" class="button success-button">Diagnose Surface Registry</button>
+                <button id="runFabricCheckBtn" class="button">Run Fabric Architecture Check</button>
                 <div class="status-box" style="margin-top: 10px; display: none;" id="surfaceDiagnosticResults">
                     <h4>Diagnostic Results</h4>
                     <pre id="surfaceDiagnosticOutput">Not run yet</pre>
+                </div>
+                <div class="status-box" style="margin-top: 10px; display: none;" id="fabricCheckResults">
+                    <h4>Fabric Architecture Check Results</h4>
+                    <pre id="fabricCheckOutput">Not run yet</pre>
                 </div>
             </div>
         </div>
@@ -353,6 +358,43 @@
                 document.getElementById('surfaceDiagnosticOutput').textContent = `Error: ${error.message}`;
                 appendConsole(`Error running Surface Registry diagnostic: ${error.message}`, true);
             });
+        });
+
+        // Fabric Architecture Check Button
+        document.getElementById('runFabricCheckBtn').addEventListener('click', () => {
+            appendConsole('Running Fabric architecture check...');
+            document.getElementById('fabricCheckResults').style.display = 'block';
+            document.getElementById('fabricCheckOutput').textContent = 'Running Fabric check...';
+            
+            fetch('/api/fabric-diagnostics')
+                .then(response => response.json())
+                .then(data => {
+                    // Format Fabric check results
+                    const allPassed = Object.values(data).filter(v => typeof v === 'boolean').every(Boolean);
+                    
+                    let formattedResults = "FABRIC ARCHITECTURE CHECK:\n\n";
+                    
+                    formattedResults += "✓ App JSON Fabric: " + (data.appJsonFabric ? "Enabled" : "Disabled or Missing") + "\n";
+                    formattedResults += "✓ App JSON Surface Registry: " + (data.appJsonSurfaceRegistry ? "Enabled" : "Disabled or Missing") + "\n";
+                    formattedResults += "✓ App Config Fabric: " + (data.appConfigFabric ? "Configured" : "Missing Configuration") + "\n";
+                    formattedResults += "✓ Gradle New Architecture: " + (data.gradleNewArch ? "Enabled" : "Disabled") + "\n";
+                    formattedResults += "✓ Gradle Surface Registry: " + (data.gradleSurfaceRegistry ? "Enabled" : "Disabled") + "\n";
+                    formattedResults += "✓ EAS Script Configuration: " + (data.easScriptConfig ? "OK" : "Missing") + "\n\n";
+                    
+                    formattedResults += "OVERALL STATUS: " + (allPassed ? "✅ ALL CHECKS PASSED" : "⚠️ SOME CHECKS FAILED") + "\n\n";
+                    
+                    formattedResults += "TIMESTAMP: " + data.timestamp + "\n";
+                    
+                    // Include the raw output at the bottom for reference
+                    formattedResults += "\n--- RAW OUTPUT ---\n" + data.rawOutput;
+                    
+                    document.getElementById('fabricCheckOutput').textContent = formattedResults;
+                    appendConsole(`Fabric architecture check completed at ${data.timestamp}`);
+                })
+                .catch(error => {
+                    document.getElementById('fabricCheckOutput').textContent = `Error: ${error.message}`;
+                    appendConsole(`Error running Fabric check: ${error.message}`, true);
+                });
         });
     </script>
 </body>
