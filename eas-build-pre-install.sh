@@ -62,3 +62,26 @@ binaryCompatibilityValidator.outputApiFileName=ReactAndroid
 EOL
 
 # Create a post-install script that will be run after npm dependencies are installed
+cat > ./eas-post-install.sh <<EOL
+#!/bin/bash
+echo "Running EAS Post-Install script..."
+
+# Copy the gradle.properties file to the right location for ReactAndroid
+mkdir -p node_modules/react-native/ReactAndroid/
+cp ./temp-gradle-props/gradle.properties node_modules/react-native/ReactAndroid/gradle.properties
+
+# Verify the file was copied correctly
+if [ -f node_modules/react-native/ReactAndroid/gradle.properties ]; then
+  echo "Successfully created ReactAndroid/gradle.properties with Fabric and Surface Registry Binding enabled"
+  cat node_modules/react-native/ReactAndroid/gradle.properties
+else
+  echo "Failed to create ReactAndroid/gradle.properties"
+  exit 1
+fi
+
+# Clean up the temp directory
+rm -rf ./temp-gradle-props
+EOL
+
+# Make the post-install script executable
+chmod +x ./eas-post-install.sh

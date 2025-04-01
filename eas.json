@@ -26,7 +26,8 @@
       },
       "env": {
         "REACT_NATIVE_GRADLE_PROPERTIES_FIX": "true"
-      }
+      },
+      "prebuildCommand": "./eas-build-pre-install.sh && (test -f ./eas-post-install.sh && ./eas-post-install.sh || echo 'No post-install script found')"
      
     },
     "production": {
