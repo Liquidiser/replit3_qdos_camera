@@ -85,6 +85,14 @@ android {
 
     namespace "com.qdoscamera"
     
+    // Java toolchain configuration instead of source/target compatibility
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(17)
+        }
+    }
+    
+    // Keep these for older Gradle versions as fallback
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
