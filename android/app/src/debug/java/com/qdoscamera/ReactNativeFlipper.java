@@ -23,6 +23,9 @@ import com.facebook.react.ReactInstanceEventListener;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.modules.network.NetworkingModule;
+import com.facebook.react.bridge.ReactMarker;
+import com.facebook.react.bridge.ReactMarkerConstants;
+import android.util.Log;
 import okhttp3.OkHttpClient;
 
 /**
@@ -38,6 +41,26 @@ public class ReactNativeFlipper {
       client.addPlugin(new DatabasesFlipperPlugin(context));
       client.addPlugin(new SharedPreferencesFlipperPlugin(context));
       client.addPlugin(CrashReporterPlugin.getInstance());
+      
+      // Add React Native lifecycle monitoring for SurfaceRegistry
+      ReactMarker.addListener(
+          (name, tag, instanceKey) -> {
+            if (name == ReactMarkerConstants.CREATE_SURFACE_DELEGATE ||
+                name == ReactMarkerConstants.SURFACE_DELEGATE_COMPONENT_DID_MOUNT ||
+                name == ReactMarkerConstants.FABRIC_COMMIT_START ||
+                name == ReactMarkerConstants.FABRIC_COMMIT_END ||
+                name == ReactMarkerConstants.FABRIC_DIFF_END) {
+              Log.d("QDOS", "React Marker: " + name.toString() + ", tag: " + tag);
+            }
+            
+            if (name == ReactMarkerConstants.CREATE_UI_MANAGER_MODULE_START) {
+              Log.d("QDOS", "UI Manager Module initialization started");
+            }
+            
+            if (name == ReactMarkerConstants.CREATE_UI_MANAGER_MODULE_END) {
+              Log.d("QDOS", "UI Manager Module initialization completed");
+            }
+          });
 
       NetworkFlipperPlugin networkFlipperPlugin = new NetworkFlipperPlugin();
       NetworkingModule.setCustomClientBuilder(

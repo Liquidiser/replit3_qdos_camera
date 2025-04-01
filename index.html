@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QDOS Camera App Debug</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background-color: #f0f0f0;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .logo {
+            width: 100px;
+            height: auto;
+            margin-bottom: 10px;
+        }
+        .card {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            font-size: 24px;
+        }
+        h2 {
+            color: #555;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 8px;
+            font-size: 18px;
+        }
+        pre {
+            background-color: #eee;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 14px;
+        }
+        .file-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .status-ok {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status-error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #0366d6;
+            color: white;
+            border-radius: 4px;
+            text-decoration: none;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            border: none;
+            font-size: 14px;
+        }
+        .button:hover {
+            background-color: #0250a0;
+        }
+        .danger-button {
+            background-color: #d73a49;
+        }
+        .danger-button:hover {
+            background-color: #cb2431;
+        }
+        .success-button {
+            background-color: #2ea44f;
+        }
+        .success-button:hover {
+            background-color: #22863a;
+        }
+        #projectInfo, #statusInfo, #fileInfo, #consoleOutput {
+            white-space: pre-wrap;
+        }
+        .console-section {
+            background-color: #282c34;
+            color: #abb2bf;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-family: monospace;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        .tab {
+            padding: 8px 16px;
+            cursor: pointer;
+            background-color: #eee;
+            border: 1px solid #ddd;
+            margin-right: 4px;
+            border-radius: 4px 4px 0 0;
+        }
+        .tab.active {
+            background-color: #f9f9f9;
+            border-bottom: 1px solid #f9f9f9;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="attached_assets/4 Stack Logo Button Square 512.png" alt="QDOS Camera Logo" class="logo">
+        <h1>QDOS Camera App Debug Console</h1>
+    </div>
+
+    <div class="tabs">
+        <div class="tab active" data-tab="info">Project Info</div>
+        <div class="tab" data-tab="status">Server Status</div>
+        <div class="tab" data-tab="files">Files</div>
+        <div class="tab" data-tab="actions">Actions</div>
+        <div class="tab" data-tab="fixes">Fix Tools</div>
+    </div>
+
+    <div class="tab-content active" id="info-tab">
+        <div class="card">
+            <h2>Project Information</h2>
+            <pre id="projectInfo">Loading project information...</pre>
+        </div>
+    </div>
+
+    <div class="tab-content" id="status-tab">
+        <div class="card">
+            <h2>Server Status</h2>
+            <pre id="statusInfo">Checking server status...</pre>
+        </div>
+    </div>
+
+    <div class="tab-content" id="files-tab">
+        <div class="card">
+            <h2>Project Files</h2>
+            <div class="file-list">
+                <pre id="fileInfo">Loading file information...</pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-content" id="actions-tab">
+        <div class="card">
+            <h2>Debug Actions</h2>
+            <button id="refreshInfoBtn" class="button">Refresh All Info</button>
+            <button id="startMetroBtn" class="button success-button">Start Metro Bundler</button>
+            <button id="buildAndroidBtn" class="button danger-button">Build Android App</button>
+            
+            <h3>Console Output</h3>
+            <div class="console-section" id="consoleOutput">No output yet...</div>
+        </div>
+    </div>
+
+    <div class="tab-content" id="fixes-tab">
+        <div class="card">
+            <h2>Common Issue Fixes</h2>
+            <div class="fix-section">
+                <h3>Surface Registry Binding Issues</h3>
+                <p>This tool diagnoses and attempts to fix the "SurfaceRegistryBinding::StartService failed" error that commonly occurs in React Native Android apps.</p>
+                <button id="diagnoseSurfaceBtn" class="button success-button">Diagnose Surface Registry</button>
+                <div class="status-box" style="margin-top: 10px; display: none;" id="surfaceDiagnosticResults">
+                    <h4>Diagnostic Results</h4>
+                    <pre id="surfaceDiagnosticOutput">Not run yet</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching functionality
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs and tab contents
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding content
+                tab.classList.add('active');
+                document.getElementById(`${tab.dataset.tab}-tab`).classList.add('active');
+            });
+        });
+
+        // Function to append console output
+        function appendConsole(text, isError = false) {
+            const consoleEl = document.getElementById('consoleOutput');
+            const line = document.createElement('div');
+            line.textContent = `${new Date().toISOString().slice(11, 19)} ${text}`;
+            
+            if (isError) {
+                line.style.color = '#e06c75';
+            }
+            
+            consoleEl.appendChild(line);
+            consoleEl.scrollTop = consoleEl.scrollHeight;
+        }
+
+        // Function to load all data
+        function loadAllData() {
+            // Fetch project information
+            fetch('/api/project-info')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('projectInfo').innerHTML = JSON.stringify(data, null, 2);
+                    appendConsole('Project information loaded');
+                })
+                .catch(error => {
+                    document.getElementById('projectInfo').innerHTML = `Error: ${error.message}`;
+                    appendConsole(`Error loading project info: ${error.message}`, true);
+                });
+
+            // Fetch server status
+            fetch('/api/status')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('statusInfo').innerHTML = JSON.stringify(data, null, 2);
+                    appendConsole('Server status loaded');
+                })
+                .catch(error => {
+                    document.getElementById('statusInfo').innerHTML = `Error: ${error.message}`;
+                    appendConsole(`Error loading server status: ${error.message}`, true);
+                });
+                
+            // Fetch file information
+            fetch('/api/check-files')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('fileInfo').innerHTML = JSON.stringify(data, null, 2);
+                    appendConsole('File information loaded');
+                })
+                .catch(error => {
+                    document.getElementById('fileInfo').innerHTML = `Error: ${error.message}`;
+                    appendConsole(`Error loading file info: ${error.message}`, true);
+                });
+        }
+
+        // Load data on page load
+        window.addEventListener('load', loadAllData);
+
+        // Set up button click handlers
+        document.getElementById('refreshInfoBtn').addEventListener('click', () => {
+            appendConsole('Refreshing all information...');
+            loadAllData();
+        });
+
+        document.getElementById('startMetroBtn').addEventListener('click', () => {
+            appendConsole('Starting Metro bundler...');
+            
+            fetch('/api/start-metro', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                appendConsole(`Metro bundler: ${data.message}`);
+            })
+            .catch(error => {
+                appendConsole(`Error starting Metro: ${error.message}`, true);
+            });
+        });
+
+        document.getElementById('buildAndroidBtn').addEventListener('click', () => {
+            appendConsole('Building Android app...');
+            
+            fetch('/api/build-android', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                appendConsole(`Android build: ${data.message}`);
+            })
+            .catch(error => {
+                appendConsole(`Error building Android: ${error.message}`, true);
+            });
+        });
+        
+        // Surface Registry Diagnostic Button
+        document.getElementById('diagnoseSurfaceBtn').addEventListener('click', () => {
+            appendConsole('Diagnosing Surface Registry issues...');
+            document.getElementById('surfaceDiagnosticResults').style.display = 'block';
+            document.getElementById('surfaceDiagnosticOutput').textContent = 'Running diagnostics...';
+            
+            fetch('/api/fix-surface-registry', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Format diagnostic results for better readability
+                let formattedResults = "DIAGNOSTIC RESULTS:\n\n";
+                
+                formattedResults += "✓ Surface Registry Properly Configured: " + 
+                    (data.diagnosticResults.surfaceRegistryProperlyConfigured ? "Yes" : "No") + "\n";
+                    
+                formattedResults += "✓ SoLoader Initialized: " + 
+                    (data.diagnosticResults.soLoaderInitialized ? "Yes" : "No") + "\n\n";
+                
+                if (data.diagnosticResults.possibleIssues.length > 0) {
+                    formattedResults += "ISSUES DETECTED:\n";
+                    data.diagnosticResults.possibleIssues.forEach((issue, index) => {
+                        formattedResults += `${index + 1}. ${issue}\n`;
+                    });
+                    formattedResults += "\n";
+                } else {
+                    formattedResults += "No issues detected with Surface Registry configuration.\n\n";
+                }
+                
+                formattedResults += "RECOMMENDED FIXES:\n";
+                data.diagnosticResults.recommendedFixes.forEach((fix, index) => {
+                    formattedResults += `${index + 1}. ${fix}\n`;
+                });
+                
+                document.getElementById('surfaceDiagnosticOutput').textContent = formattedResults;
+                appendConsole(`Surface Registry diagnostic completed at ${data.timestamp}`);
+            })
+            .catch(error => {
+                document.getElementById('surfaceDiagnosticOutput').textContent = `Error: ${error.message}`;
+                appendConsole(`Error running Surface Registry diagnostic: ${error.message}`, true);
+            });
+        });
+    </script>
+</body>
+</html>

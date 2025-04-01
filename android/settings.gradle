@@ -1,6 +1,6 @@
 pluginManagement { 
-    includeBuild("../node_modules/@react-native/gradle-plugin")
     repositories {
+<<<<<<< HEAD
                 gradlePluginPortal()
                 google()
                 mavenCentral()
@@ -10,6 +10,27 @@ plugins {
     id("com.facebook.react.settings") }
 
 extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
+=======
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+    }
+}
+
+plugins { 
+    id("com.facebook.react.settings")
+}
+
+gradle.projectsLoaded { 
+    if (gradle.gradleVersion.split("\\.")[0].toInteger() >= 8) {
+        allprojects {
+            tasks.withType(JavaCompile).configureEach {
+                options.compilerArgs << "-Xlint:deprecation" << "-Xlint:unchecked"
+            }
+        }
+    }
+}
+>>>>>>> 9be6f8fe9d282423776dbc37825dec36984b0b7e
 
 rootProject.name = 'QDOS Camera'
 

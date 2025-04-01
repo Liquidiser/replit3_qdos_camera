@@ -4,7 +4,11 @@ import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactActivityDelegate;
+import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.modules.core.DeviceEventManagerModule;
+import com.facebook.soloader.SoLoader;
 import android.os.Bundle;
+import android.view.KeyEvent;
 
 public class MainActivity extends ReactActivity {
 
@@ -19,9 +23,23 @@ public class MainActivity extends ReactActivity {
 
   /**
    * Required for proper react-native-screens & react-navigation support
+   * Also initializes Surface Registry binding to prevent errors
    */
   @Override
   protected void onCreate(Bundle savedInstanceState) {
+    // Pre-load critical native modules to ensure proper initialization
+    try {
+      SoLoader.loadLibrary("fabricjni");
+      SoLoader.loadLibrary("rnscreens");
+      
+      // Ensure SurfaceRegistry is initialized before React Native components
+      Class.forName("com.facebook.react.fabric.SurfaceRegistry");
+    } catch (Exception e) {
+      // Log but continue - the app should still function
+      System.err.println("Error preloading native modules: " + e.getMessage());
+    }
+    
+    // Pass null to avoid restore issues with react-navigation
     super.onCreate(null);
   }
 

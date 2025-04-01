@@ -25,7 +25,12 @@ const config = {
       foregroundImage: "./assets/adaptive-icon.png",
       backgroundColor: "#FFFFFF",
     },
+<<<<<<< HEAD
 
+=======
+    package: "com.qdoscamera",
+    versionCode: 1,
+>>>>>>> 9be6f8fe9d282423776dbc37825dec36984b0b7e
     permissions: [
       "CAMERA",
       "RECORD_AUDIO",
