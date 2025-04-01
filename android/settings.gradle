@@ -1,19 +1,16 @@
 
 pluginManagement { 
+    includeBuild("../node_modules/@react-native/gradle-plugin")
     repositories {
-        gradlePluginPortal()
-        google()
-        mavenCentral()
-    } 
-}
+                gradlePluginPortal()
+                google()
+                mavenCentral()
+            } }
+
 
 plugins { 
-    id("com.facebook.react.settings") 
-}
+    id("com.facebook.react.settings") }
 
-if (new File('../node_modules/@react-native/gradle-plugin').exists()) {
-    includeBuild('../node_modules/@react-native/gradle-plugin')
-}
 
 extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
 
@@ -55,4 +52,7 @@ project(':react-native-share').projectDir = new File(rootProject.projectDir, '..
 include ':react-native-svg'
 project(':react-native-svg').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-svg/android')
 
-// Gradle plugin is already included at the top of the file
+// Attempt to include the gradle plugin if it exists
+if (new File('../node_modules/@react-native/gradle-plugin').exists()) {
+    includeBuild('../node_modules/@react-native/gradle-plugin')
+}

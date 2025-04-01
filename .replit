@@ -1,4 +1,4 @@
-modules = ["nodejs-20", "java-17"]
+modules = ["nodejs-20"]
 
 [nix]
 channel = "stable-24_05"
@@ -13,11 +13,25 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "React Native Server"
+args = "react-native-android"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "React Native Android"
+args = "React Native Server"
+
+[[workflows.workflow]]
+name = "react-native-android"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "packager.installForAll"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npx react-native run-android"
 
 [[workflows.workflow]]
 name = "React Native Server"
@@ -33,20 +47,6 @@ task = "packager.installForAll"
 task = "shell.exec"
 args = "node server.js"
 waitForPort = 5000
-
-[[workflows.workflow]]
-name = "React Native Android"
-author = "agent"
-
-[workflows.workflow.metadata]
-agentRequireRestartOnSave = false
-
-[[workflows.workflow.tasks]]
-task = "packager.installForAll"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "./run-android.sh"
 
 [deployment]
 run = ["sh", "-c", "npx react-native start --port 5000"]
