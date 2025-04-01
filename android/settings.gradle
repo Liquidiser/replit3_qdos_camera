@@ -7,12 +7,12 @@ pluginManagement {
     } 
 }
 
-if (new File('../node_modules/@react-native/gradle-plugin').exists()) {
-    includeBuild('../node_modules/@react-native/gradle-plugin')
-}
-
 plugins { 
     id("com.facebook.react.settings") 
+}
+
+if (new File('../node_modules/@react-native/gradle-plugin').exists()) {
+    includeBuild('../node_modules/@react-native/gradle-plugin')
 }
 
 extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }

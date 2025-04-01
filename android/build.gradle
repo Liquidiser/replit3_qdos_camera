@@ -7,6 +7,9 @@ buildscript {
         targetSdkVersion = 34
         minSdkVersion = 26
         
+        // Java configuration - specify Java 21
+        javaVersion = JavaVersion.VERSION_21
+        
         // React Native configuration
         kotlin_version = "1.8.0"
         androidXCore = "1.10.1"
