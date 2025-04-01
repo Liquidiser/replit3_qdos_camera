@@ -17,7 +17,7 @@
       "env": {
         "REACT_NATIVE_GRADLE_PROPERTIES_FIX": "true"
       },
-      "prebuildCommand": "./eas-build-pre-install.sh && (test -f ./eas-post-install.sh && ./eas-post-install.sh || echo 'No post-install script found')"
+      "prebuildCommand": "bash ./eas-build-pre-install.sh && (test -f ./eas-post-install.sh && bash ./eas-post-install.sh || echo 'No post-install script found')"
     },
     "preview": {
       "distribution": "internal",
@@ -27,7 +27,7 @@
       "env": {
         "REACT_NATIVE_GRADLE_PROPERTIES_FIX": "true"
       },
-      "prebuildCommand": "./eas-build-pre-install.sh && (test -f ./eas-post-install.sh && ./eas-post-install.sh || echo 'No post-install script found')"
+      "prebuildCommand": "bash ./eas-build-pre-install.sh && (test -f ./eas-post-install.sh && bash ./eas-post-install.sh || echo 'No post-install script found')"
      
     },
     "production": {
@@ -37,7 +37,7 @@
       "env": {
         "REACT_NATIVE_GRADLE_PROPERTIES_FIX": "true"
       },
-      "prebuildCommand": "./eas-build-pre-install.sh && (test -f ./eas-post-install.sh && ./eas-post-install.sh || echo 'No post-install script found')"
+      "prebuildCommand": "bash ./eas-build-pre-install.sh && (test -f ./eas-post-install.sh && bash ./eas-post-install.sh || echo 'No post-install script found')"
     }
   },
   "submit": {
