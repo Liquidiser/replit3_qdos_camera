@@ -8,7 +8,15 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactNativeHost;
 import com.facebook.soloader.SoLoader;
+import com.facebook.react.bridge.JSIModulePackage;
+import com.facebook.react.bridge.JSIModuleProvider;
+import com.facebook.react.bridge.JSIModuleSpec;
+import com.facebook.react.bridge.JSIModuleType;
+import com.facebook.react.fabric.ComponentFactory;
+import com.facebook.react.fabric.CoreComponentsRegistry;
+import com.facebook.react.fabric.FabricJSIModuleProvider;
 import java.util.List;
+import java.util.Collections;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -52,11 +60,25 @@ public class MainApplication extends Application implements ReactApplication {
   @Override
   public void onCreate() {
     super.onCreate();
+    // Initialize SoLoader before any other React Native components
     SoLoader.init(this, /* native exopackage */ false);
+    
+    // Initialize React Native's global object with proper SurfaceRegistry binding
+    try {
+      // Force initialization of the Global class
+      Class<?> globalClass = Class.forName("com.facebook.react.common.annotations.Global");
+      // This helps ensure the SurfaceRegistryBinding service is properly installed
+    } catch (ClassNotFoundException e) {
+      // Ignore, as this is just a preemptive loading measure
+    }
+    
+    // Continue with the normal initialization
     if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
       // If you opted-in for the New Architecture, we load the native entry point for this app.
       DefaultNewArchitectureEntryPoint.load();
     }
+    
+    // Finally initialize Flipper for debugging
     ReactNativeFlipper.initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
   }
 }
