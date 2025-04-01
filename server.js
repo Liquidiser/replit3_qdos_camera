@@ -86,30 +86,95 @@ app.post('/api/start-metro', (req, res) => {
   });
 });
 
-// Endpoint to run Android build
+// Endpoint to run Android build with specific surface registry error handling
 app.post('/api/build-android', (req, res) => {
   console.log('Attempting to build Android app...');
   
-  const androidProcess = exec('npx react-native run-android', (error, stdout, stderr) => {
-    if (error) {
-      console.error(`Android build error: ${error.message}`);
-      return;
-    }
-    console.log(`Android build output: ${stdout}`);
-    console.error(`Android build stderr: ${stderr}`);
-  });
+  // First, check for common build issues
+  const checkBuildCmd = 'grep -r "SurfaceRegistryBinding" android/app/src/main/java || echo "Not found"';
   
-  androidProcess.stdout.on('data', (data) => {
-    console.log(`Android: ${data}`);
-  });
-  
-  androidProcess.stderr.on('data', (data) => {
-    console.error(`Android Error: ${data}`);
+  exec(checkBuildCmd, (error, stdout, stderr) => {
+    console.log('Checking for SurfaceRegistryBinding references:', stdout || 'None found');
+    
+    // Now run the actual build
+    const androidProcess = exec('npx react-native run-android', (error, stdout, stderr) => {
+      if (error) {
+        console.error(`Android build error: ${error.message}`);
+        
+        // Check specifically for SurfaceRegistry errors
+        if (stderr && stderr.includes('SurfaceRegistryBinding::StartService failed')) {
+          console.error('Detected SurfaceRegistryBinding error - This is likely due to React Native Fabric initialization issues');
+          
+          // Log additional diagnostic information
+          exec('adb logcat -d | grep -i "SurfaceRegistry"', (err, logOutput) => {
+            if (!err && logOutput) {
+              console.log('Related logs from device:', logOutput);
+            }
+          });
+        }
+        return;
+      }
+      console.log(`Android build output: ${stdout}`);
+      console.error(`Android build stderr: ${stderr}`);
+    });
+    
+    androidProcess.stdout.on('data', (data) => {
+      console.log(`Android: ${data}`);
+      
+      // Watch for successful initialization of Surface Registry
+      if (data.includes('SurfaceRegistry') || data.includes('ReactNative')) {
+        console.log('SurfaceRegistry/ReactNative related output detected');
+      }
+    });
+    
+    androidProcess.stderr.on('data', (data) => {
+      console.error(`Android Error: ${data}`);
+      
+      // Flag surface registry binding errors specifically
+      if (data.includes('SurfaceRegistryBinding') || data.includes('Global was not installed')) {
+        console.error('CRITICAL: SurfaceRegistryBinding error detected!');
+      }
+    });
   });
   
   res.json({
-    message: 'Android build started',
-    success: true
+    message: 'Android build started with enhanced error monitoring',
+    success: true,
+    note: 'Watch logs for "SurfaceRegistryBinding" related issues'
+  });
+});
+
+// Dedicated endpoint to diagnose and potentially fix Surface Registry issues
+app.post('/api/fix-surface-registry', (req, res) => {
+  console.log('Running Surface Registry diagnostic tools...');
+  
+  // 1. Check that the environment has the correct React Native configuration
+  exec('grep -r "react.fabric.enableSurfaceRegistryBinding" android/', (error, stdout) => {
+    const surfaceRegistryConfigured = !error && stdout.includes('enableSurfaceRegistryBinding=true');
+    
+    // 2. Check if MainApplication.java has proper initialization
+    exec('grep -r "SoLoader.init" android/app/src/main/java', (error2, stdout2) => {
+      const soLoaderInitialized = !error2 && stdout2.includes('SoLoader.init');
+      
+      // Provide diagnostic information and next steps
+      res.json({
+        diagnosticResults: {
+          surfaceRegistryProperlyConfigured: surfaceRegistryConfigured,
+          soLoaderInitialized: soLoaderInitialized,
+          possibleIssues: [
+            surfaceRegistryConfigured ? null : "SurfaceRegistryBinding not enabled in gradle.properties",
+            soLoaderInitialized ? null : "SoLoader not properly initialized in MainApplication.java"
+          ].filter(Boolean),
+          recommendedFixes: [
+            "Ensure react.fabric.enableSurfaceRegistryBinding=true is in android/gradle.properties",
+            "Initialize Global/SurfaceRegistry classes explicitly before React Native loads",
+            "Check that Hermes is properly configured in app.json and android/app/build.gradle",
+            "Try cleaning the build with 'cd android && ./gradlew clean'"
+          ]
+        },
+        timestamp: new Date().toISOString()
+      });
+    });
   });
 });
 

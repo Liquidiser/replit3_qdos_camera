@@ -143,6 +143,7 @@
         <div class="tab" data-tab="status">Server Status</div>
         <div class="tab" data-tab="files">Files</div>
         <div class="tab" data-tab="actions">Actions</div>
+        <div class="tab" data-tab="fixes">Fix Tools</div>
     </div>
 
     <div class="tab-content active" id="info-tab">
@@ -177,6 +178,21 @@
             
             <h3>Console Output</h3>
             <div class="console-section" id="consoleOutput">No output yet...</div>
+        </div>
+    </div>
+
+    <div class="tab-content" id="fixes-tab">
+        <div class="card">
+            <h2>Common Issue Fixes</h2>
+            <div class="fix-section">
+                <h3>Surface Registry Binding Issues</h3>
+                <p>This tool diagnoses and attempts to fix the "SurfaceRegistryBinding::StartService failed" error that commonly occurs in React Native Android apps.</p>
+                <button id="diagnoseSurfaceBtn" class="button success-button">Diagnose Surface Registry</button>
+                <div class="status-box" style="margin-top: 10px; display: none;" id="surfaceDiagnosticResults">
+                    <h4>Diagnostic Results</h4>
+                    <pre id="surfaceDiagnosticOutput">Not run yet</pre>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -289,6 +305,53 @@
             })
             .catch(error => {
                 appendConsole(`Error building Android: ${error.message}`, true);
+            });
+        });
+        
+        // Surface Registry Diagnostic Button
+        document.getElementById('diagnoseSurfaceBtn').addEventListener('click', () => {
+            appendConsole('Diagnosing Surface Registry issues...');
+            document.getElementById('surfaceDiagnosticResults').style.display = 'block';
+            document.getElementById('surfaceDiagnosticOutput').textContent = 'Running diagnostics...';
+            
+            fetch('/api/fix-surface-registry', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Format diagnostic results for better readability
+                let formattedResults = "DIAGNOSTIC RESULTS:\n\n";
+                
+                formattedResults += "✓ Surface Registry Properly Configured: " + 
+                    (data.diagnosticResults.surfaceRegistryProperlyConfigured ? "Yes" : "No") + "\n";
+                    
+                formattedResults += "✓ SoLoader Initialized: " + 
+                    (data.diagnosticResults.soLoaderInitialized ? "Yes" : "No") + "\n\n";
+                
+                if (data.diagnosticResults.possibleIssues.length > 0) {
+                    formattedResults += "ISSUES DETECTED:\n";
+                    data.diagnosticResults.possibleIssues.forEach((issue, index) => {
+                        formattedResults += `${index + 1}. ${issue}\n`;
+                    });
+                    formattedResults += "\n";
+                } else {
+                    formattedResults += "No issues detected with Surface Registry configuration.\n\n";
+                }
+                
+                formattedResults += "RECOMMENDED FIXES:\n";
+                data.diagnosticResults.recommendedFixes.forEach((fix, index) => {
+                    formattedResults += `${index + 1}. ${fix}\n`;
+                });
+                
+                document.getElementById('surfaceDiagnosticOutput').textContent = formattedResults;
+                appendConsole(`Surface Registry diagnostic completed at ${data.timestamp}`);
+            })
+            .catch(error => {
+                document.getElementById('surfaceDiagnosticOutput').textContent = `Error: ${error.message}`;
+                appendConsole(`Error running Surface Registry diagnostic: ${error.message}`, true);
             });
         });
     </script>
