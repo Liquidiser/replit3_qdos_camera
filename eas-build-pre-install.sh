@@ -50,14 +50,3 @@ binaryCompatibilityValidator.outputApiFileName=ReactAndroid
 EOL
 
 # Create a post-install script that will be run after npm dependencies are installed
-cat > ./eas-post-install.sh <<EOL
-#!/bin/bash
-echo "Running post-install script to fix gradle.properties..."
-mkdir -p ./node_modules/react-native/ReactAndroid/
-cp -f ./temp-gradle-props/gradle.properties ./node_modules/react-native/ReactAndroid/
-chmod 644 ./node_modules/react-native/ReactAndroid/gradle.properties
-echo "gradle.properties has been copied to ReactAndroid directory"
-EOL
-
-chmod +x ./eas-post-install.sh
-echo "Pre-install setup complete. Post-install script created."
