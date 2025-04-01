@@ -86,7 +86,7 @@ android {
 <<<<<<< HEAD
     namespace 'com.qdoscamera'
 =======
-    namespace "com.qdoscamera"
+    namespace 'com.qdoscamera'
     
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
